@@ -1,0 +1,19 @@
+
+git branch 
+-> branch 목록 확인
+
+git branch something
+-> something이라는 branch 생성
+
+git checkout something
+-> something이라는 branch로 변경
+
+
+
+something branch에서 commit한거를 
+master branch에서 확인(git log)해보면 없다.
+
+git merge something 하면, 
+합쳐지면서 파일이 생긴다.
+
+---------------------------------
