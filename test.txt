@@ -10,3 +10,6 @@ ngrok http 8080을 입력한다.
 slack API 설정페이지 들어가는 법 
 
 https://api.slack.com/apps/ 여기서 나의 bot 누르기
+
+
+새롭게 추가된거야
