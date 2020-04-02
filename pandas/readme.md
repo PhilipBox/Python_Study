@@ -25,6 +25,77 @@ s = pd.Series([1, 3, 5, np.nan, 6, 8])
 # 5    8.0
 # dtype: float64
 ```
-<br>
-또 다른 데이터 오브젝트인 **DataFrame**은 여러 형태의 데이터를 받아 생성할 수 있는데요. 그 중 한 방법으로 아래와 같이 numpy array 를 받아 생성이 가능합니다. 앞서 설명드린 것처럼 DataFrame 은 2차원 배열의 형태를 띄고 있습니다. 따라서 우리가 자주 보는 표 형태와 같이 두 가지의 기준에 따라 데이터를 담고 있습니다. 아래의 예제에서는 첫번째 기준은 날짜, 두번째 기준은 장소(A, B, C, D 라는 네 곳의 위치)```1```에 따라 측정된 어떤 값들이 담겨 있다고 생각하면 쉬울 것 같습니다. DataFrame 을 만들기 위해서는 ```pd.DataFrame()``` 라는 클래스 생성자를 사용하며, 행에 해당하는 기준(첫번째 기준)인 인덱스를 ```index``` 라는 인수로 전달하며, 열에 해당하는 기준(두번째 기준)인 컬럼을 ```columns``` 이라는 인수로 전달합니다. 여기에서는 인덱스로 ```pd.date_range()``` 를 사용하여 날짜 값들을 만들어 전달해 주었고, 컬럼의 이름은 A, B, C, D 라는 이름이 담긴 리스트로 넣어보았습니다.
+<br>또 다른 데이터 오브젝트인 **DataFrame**은 여러 형태의 데이터를 받아 생성할 수 있는데요. 그 중 한 방법으로 아래와 같이 numpy array 를 받아 생성이 가능합니다. 앞서 설명드린 것처럼 DataFrame 은 2차원 배열의 형태를 띄고 있습니다. 따라서 우리가 자주 보는 표 형태와 같이 두 가지의 기준에 따라 데이터를 담고 있습니다. 아래의 예제에서는 첫번째 기준은 날짜, 두번째 기준은 장소(A, B, C, D 라는 네 곳의 위치)```1```에 따라 측정된 어떤 값들이 담겨 있다고 생각하면 쉬울 것 같습니다. DataFrame 을 만들기 위해서는 ```pd.DataFrame()``` 라는 클래스 생성자를 사용하며, 행에 해당하는 기준(첫번째 기준)인 인덱스를 ```index``` 라는 인수로 전달하며, 열에 해당하는 기준(두번째 기준)인 컬럼을 ```columns``` 이라는 인수로 전달합니다. 여기에서는 인덱스로 ```pd.date_range()``` 를 사용하여 날짜 값들을 만들어 전달해 주었고, 컬럼의 이름은 A, B, C, D 라는 이름이 담긴 리스트로 넣어보았습니다.
+```python
+dates = pd.date_range('20130101', periods=6)
+# DatetimeIndex(['2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04',
+#                '2013-01-05', '2013-01-06'],
+#               dtype='datetime64[ns]', freq='D')
 
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+#                   A         B         C         D
+# 2013-01-01  0.469112 -0.282863 -1.509059 -1.135632
+# 2013-01-02  1.212112 -0.173215  0.119209 -1.044236
+# 2013-01-03 -0.861849 -2.104569 -0.494929  1.071804
+# 2013-01-04  0.721555 -0.706771 -1.039575  0.271860
+# 2013-01-05 -0.424972  0.567020  0.276232 -1.087401
+# 2013-01-06 -0.673690  0.113648 -1.478427  0.524988
+```
+<br>DataFrame 을 생성하는 또 다른 방법으로 아래와 같이 여러 종류의 자료들이 담긴 딕셔너리(dict)를 넣어주어 만들 수 있습니다. 이 때에는 dict 의 key 값이 열을 정의하는 컬럼이 되며, 행을 정의하는 인덱스는 자동으로 0부터 시작하여 1씩 증가하는 정수 인덱스가 사용됩니다.
+```
+df2 = pd.DataFrame({'A': 1.,
+                    'B': pd.Timestamp('20130102'),
+                    'C': pd.Series(1, index=list(range(4)), dtype='float32'),
+                    'D': np.array([3]*4, dtype='int32'),
+                    'E': pd.Categorical(['test', 'train', 'test', 'train']),
+                    'F': 'foo'})
+#      A          B    C  D      E    F
+# 0  1.0 2013-01-02  1.0  3   test  foo
+# 1  1.0 2013-01-02  1.0  3  train  foo
+# 2  1.0 2013-01-02  1.0  3   test  foo
+# 3  1.0 2013-01-02  1.0  3  train  foo
+```
+DataFrame 의 컬럼들은 각기 특별한 자료형을 갖고 있을 수 있습니다. 이는 DataFrame 내에 있는 dtypes 라는 속성을 통해 확인 가능합니다. 파이썬의 기본적인 소수점은 float64 로 잡히고, 기본적은 문자열은 str 이 아니라 object 라는 자료형으로 나타납니다.
+```python
+df2.dtypes
+# A           float64
+# B    datetime64[ns]
+# C           float32
+# D             int32
+# E          category
+# F            object
+# dtype: object
+```
+Jupyter 를 사용하시는 분이라면 ```df2.<TAB>```(‘df2.’까지 입력하고 탭을 누름)을 통해 다음과 같이 dtypes 외에도 다른 속성들이 무엇이 있는지 확인할 수 있습니다.
+```python
+  In [13]: df2.<TAB>
+df2.A                  df2.bool
+df2.abs                df2.boxplot
+df2.add                df2.C
+df2.add_prefix         df2.clip
+df2.add_suffix         df2.clip_lower
+df2.align              df2.clip_upper
+df2.all                df2.columns
+df2.any                df2.combine
+df2.append             df2.combine_first
+df2.apply              df2.compound
+df2.applymap           df2.consolidate
+df2.as_blocks          df2.convert_objects
+df2.asfreq             df2.copy
+df2.as_matrix          df2.corr
+df2.astype             df2.corrwith
+df2.at                 df2.count
+df2.at_time            df2.cov
+df2.axes               df2.cummax
+df2.B                  df2.cummin
+df2.between_time       df2.cumprod
+df2.bfill              df2.cumsum
+df2.blocks             df2.D
+```
+보다시피 컬럼 A, B, C, D 가 자동적으로 생성되어 나타나는 것을 확인할 수 있습니다. 나머지 속성들은 간결성을 위해 생략하였기 때문에 E 도 뒤에 있을 것입니다.
+<br>Ipython 을 사용하지 않는 분이라면, python 의 빌트인 함수 ```dir```을 통해 다음과 같이 오브젝트가 갖고 있는 속성 및 메소드들을 모두 확인 가능합니다. (약 400 개가 넘는 항목입니다. 엄청 많습니다.)
+```python
+dir(df2)
+# ['A', 'B', 'C', ... , 'values', 'var', 'where', 'xs']
+```
+이 외에도 pandas 에서 제공하는 자료 구조들이 무엇이 있는지 알아보시려면 pandas 공식 문서에 있는 [Intro to data structures](https://pandas.pydata.org/pandas-docs/stable/getting_started/dsintro.html) 을 참고하시면 됩니다.
